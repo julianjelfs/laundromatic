@@ -106,7 +106,7 @@ view item now model =
                         [ span [] [ text <| item.name ]
                         , span [ class "item__interval" ] [ text <| "(" ++ String.fromInt item.intervalInDays ++ " days)" ]
                         ]
-                    , p [ class "item_subtitle" ] [ text <| lastWashed now item ]
+                    , p [ class "item_subtitle" ] [ text <| dueIn now item ]
                     ]
                 , button
                     [ class "item__action"
@@ -128,8 +128,8 @@ isOverdue now item =
     timeTillDue now item < 0
 
 
-lastWashed : Posix -> Item -> String
-lastWashed now item =
+dueIn : Posix -> Item -> String
+dueIn now item =
     let
         nowInt =
             Time.posixToMillis now
@@ -143,7 +143,11 @@ lastWashed now item =
                 days =
                     toFloat (nowInt - lw) / 1000 / 60 / 60 / 24
 
-                rounded =
-                    toFloat (round (days * 100)) / 100
+                due =
+                    toFloat (round ((toFloat item.intervalInDays - days) * 100)) / 100
             in
-            "washed " ++ String.fromFloat rounded ++ " days ago"
+            if due < 0 then
+                "overdue by " ++ String.fromFloat (negate due) ++ " days"
+
+            else
+                "due in " ++ String.fromFloat due ++ " days"
