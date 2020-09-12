@@ -102,7 +102,7 @@ view item model =
                         [ span [] [ text <| item.name ]
                         , span [ class "item__interval" ] [ text <| "(" ++ String.fromInt item.intervalInDays ++ " days)" ]
                         ]
-                    , p [ class "item_subtitle" ] [ text <| dueIn item ]
+                    , p [ class "item__subtitle" ] [ text <| dueIn item ]
                     ]
                 , button
                     [ class "item__action"

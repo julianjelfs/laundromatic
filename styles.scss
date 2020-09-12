@@ -104,8 +104,11 @@ p { margin: 0 }
         }
 
         .item__subtitle {
+            margin-top: 3px;
             font-weight: lighter;
-            font-size: 10px;
+            font-style: italic;
+            font-size: 13px;
+            color: #333
         }
     }
 }
