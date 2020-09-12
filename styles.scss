@@ -71,6 +71,10 @@ p { margin: 0 }
             background-color: hotpink;
         }
 
+        &.-due {
+            background-color: orange;
+        }
+
         &.-no {
             margin-left: 5px;
             background-color: #fff;

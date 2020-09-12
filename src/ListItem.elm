@@ -4,7 +4,7 @@ import DeleteIcon as Delete
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Item exposing (Item, timeTillDue)
+import Item exposing (Item)
 import Ports
 import Time exposing (Posix)
 
@@ -77,8 +77,8 @@ confirmView onConfirm =
         ]
 
 
-view : Item -> Posix -> Model -> Html Msg
-view item now model =
+view : Item -> Model -> Html Msg
+view item model =
     case model.confirming of
         ConfirmingDelete ->
             confirmView (Delete item)
@@ -87,10 +87,6 @@ view item now model =
             confirmView (Wash item)
 
         NotConfirming ->
-            let
-                overdue =
-                    isOverdue now item
-            in
             div
                 [ class "item"
                 , classList [ ( "-processing", model.busy ) ]
@@ -106,15 +102,18 @@ view item now model =
                         [ span [] [ text <| item.name ]
                         , span [ class "item__interval" ] [ text <| "(" ++ String.fromInt item.intervalInDays ++ " days)" ]
                         ]
-                    , p [ class "item_subtitle" ] [ text <| dueIn now item ]
+                    , p [ class "item_subtitle" ] [ text <| dueIn item ]
                     ]
                 , button
                     [ class "item__action"
                     , onClick ConfirmWash
-                    , classList [ ( "-overdue", overdue ) ]
+                    , classList [ ( "-overdue", item.dueInDays < 0 ), ( "-due", item.dueInDays == 0 ) ]
                     ]
                     [ text <|
-                        if overdue then
+                        if item.dueInDays == 0 then
+                            "Due"
+
+                        else if item.dueInDays < 0 then
                             "Overdue"
 
                         else
@@ -123,31 +122,13 @@ view item now model =
                 ]
 
 
-isOverdue : Posix -> Item -> Bool
-isOverdue now item =
-    timeTillDue now item < 0
+dueIn : Item -> String
+dueIn item =
+    if item.dueInDays == 0 then
+        "due today"
 
+    else if item.dueInDays < 0 then
+        "overdue by " ++ String.fromInt (negate item.dueInDays) ++ " days"
 
-dueIn : Posix -> Item -> String
-dueIn now item =
-    let
-        nowInt =
-            Time.posixToMillis now
-    in
-    case item.lastWashed of
-        0 ->
-            "never washed"
-
-        lw ->
-            let
-                days =
-                    toFloat (nowInt - lw) / 1000 / 60 / 60 / 24
-
-                due =
-                    toFloat (round ((toFloat item.intervalInDays - days) * 100)) / 100
-            in
-            if due < 0 then
-                "overdue by " ++ String.fromFloat (negate due) ++ " days"
-
-            else
-                "due in " ++ String.fromFloat due ++ " days"
+    else
+        "due in " ++ String.fromInt item.dueInDays ++ " days"

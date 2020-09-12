@@ -7,7 +7,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Login
 import Ports
-import Time
 import View exposing (..)
 
 
@@ -26,5 +25,4 @@ subscriptions _ =
     Sub.batch
         [ Ports.receivedItems ReceivedItems
         , Sub.map LoginMsg Login.subscriptions
-        , Time.every 1000 GetTime
         ]

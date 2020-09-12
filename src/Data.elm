@@ -16,7 +16,6 @@ type alias Flags =
 type Msg
     = LoginMsg Login.Msg
     | ReceivedItems E.Value
-    | GetTime Posix
     | ListItemMsg String ListItem.Msg
     | NewItemMsg NewItem.Msg
     | StartAddNew
@@ -27,7 +26,6 @@ type alias Model =
     { user : Maybe User
     , loginModel : Login.Model
     , items : List Item
-    , now : Posix
     , itemModels : Dict String ListItem.Model
     , addingNew : Bool
     , newItem : NewItem.Model

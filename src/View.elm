@@ -10,7 +10,6 @@ import ListItem
 import Login
 import LogoutIcon
 import NewItem
-import Time
 
 
 view : Model -> Html Msg
@@ -43,7 +42,7 @@ showItems model =
     let
         sorted =
             model.items
-                |> List.sortBy (timeTillDue model.now)
+                |> List.sortBy .dueInDays
     in
     div []
         (List.map
@@ -58,7 +57,7 @@ showItems model =
 
                     Just m ->
                         Html.map (ListItemMsg item.id) <|
-                            ListItem.view item model.now m
+                            ListItem.view item m
             )
             sorted
         )

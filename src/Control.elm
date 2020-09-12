@@ -17,12 +17,11 @@ init flags =
     ( { user = flags.user
       , loginModel = Login.init
       , items = []
-      , now = Time.millisToPosix 0
       , itemModels = Dict.empty
       , addingNew = False
       , newItem = NewItem.init
       }
-    , Task.perform GetTime Time.now
+    , Cmd.none
     )
 
 
@@ -85,9 +84,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-        GetTime now ->
-            ( { model | now = now }, Cmd.none )
 
         StartAddNew ->
             ( { model | addingNew = True }, Cmd.none )

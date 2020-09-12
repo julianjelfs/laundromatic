@@ -4,6 +4,9 @@ import * as firebase from "firebase/app";
 
 import "firebase/auth";
 import "firebase/firestore";
+import  dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const firebaseConfig = {
   apiKey: "AIzaSyCTXei5G7r8CZZfqKcw_sHCgVza0qCxpVY",
@@ -36,47 +39,61 @@ firebase.auth().onAuthStateChanged((user) => {
     });
 
     elm.ports.washItem.subscribe((item) => {
-      const doc = db.collection('items').doc(item.id);
+      const doc = db.collection(collection(user)).doc(item.id);
       doc.set({
-        lastWashed: +new Date()
-      }, { merge: true}).then(getData)
+        lastWashed: +today()
+      }, { merge: true}).then(() => getData(user))
     });
 
     elm.ports.deleteItem.subscribe((item) => {
-      db.collection('items').doc(item.id).delete().then(getData)
+      db.collection(collection(user)).doc(item.id).delete().then(() => getData(user))
     });
 
     elm.ports.addNewItem.subscribe(([name, intervalInDays, lastWashedDays]) => {
-      const now = +new Date();
-      const diff = lastWashedDays * 24 * 60 * 60 * 1000;
-      db.collection('items').add({
+      const now = today();
+      const lastWashed = now.subtract(lastWashedDays, 'day');
+      db.collection(collection(user)).add({
         name, 
         intervalInDays,
-        lastWashed: now - diff,
-      }).then(getData).catch(err => {
+        lastWashed: +lastWashed,
+      }).then(() => getData(user)).catch(err => {
         elm.ports.addNewError.send(err.message);
       })
     });
 
-    if(user) {
-      getData();
-    }
+    getData(user);
 })
 
 
 const db = firebase.firestore();
 
-function getData() {
-  db.collection('items').get().then(query => {
+function getData(user) {
+  if(!user) return;
+
+  db.collection(collection(user)).get().then(query => {
     const items = [];
+    const now = today();
     query.forEach(item => {
+      const data = item.data();
+      const lw = dayjs(data.lastWashed);
+      const dueOn = lw.add(data.intervalInDays, 'day');
+      const dueInDays = dueOn.diff(now, 'day');
       items.push({
         id: item.id,
         ...item.data(),
+        dueInDays, 
       })
     })
     if (elm) {
       elm.ports.receivedItems.send(items);
     }
   })
+}
+
+function today() {
+  return dayjs().hour(12).minute(0);
+}
+
+function collection({uid}) {
+  return `${uid}_items`;
 }
