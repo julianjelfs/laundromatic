@@ -87,6 +87,14 @@ view item model =
             confirmView (Wash item)
 
         NotConfirming ->
+            let
+                pluralize n =
+                    if n == 1 then
+                        " day)"
+
+                    else
+                        " days)"
+            in
             div
                 [ class "item"
                 , classList [ ( "-processing", model.busy ) ]
@@ -100,7 +108,7 @@ view item model =
                     [ class "item__desc" ]
                     [ p [ class "item__title" ]
                         [ span [] [ text <| item.name ]
-                        , span [ class "item__interval" ] [ text <| "(" ++ String.fromInt item.intervalInDays ++ " days)" ]
+                        , span [ class "item__interval" ] [ text <| "(" ++ String.fromInt item.intervalInDays ++ pluralize item.intervalInDays ]
                         ]
                     , p [ class "item__subtitle" ] [ text <| dueIn item ]
                     ]
@@ -124,11 +132,18 @@ view item model =
 
 dueIn : Item -> String
 dueIn item =
-    if item.dueInDays == 0 then
-        "due today"
+    case ( String.fromInt item.dueInDays, item.dueInDays < 0 ) of
+        ( "0", _ ) ->
+            "due today"
 
-    else if item.dueInDays < 0 then
-        "overdue by " ++ String.fromInt (negate item.dueInDays) ++ " days"
+        ( "1", _ ) ->
+            "due tommorrow"
 
-    else
-        "due in " ++ String.fromInt item.dueInDays ++ " days"
+        ( "-1", _ ) ->
+            "due yesterday"
+
+        ( _, True ) ->
+            "overdue by " ++ String.fromInt (negate item.dueInDays) ++ " days"
+
+        ( n, False ) ->
+            "due in " ++ n ++ " days"
