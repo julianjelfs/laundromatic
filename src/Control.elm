@@ -8,8 +8,6 @@ import ListItem
 import Login
 import NewItem
 import Ports
-import Task
-import Time
 
 
 init : Flags -> ( Model, Cmd Msg )

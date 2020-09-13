@@ -1,7 +1,6 @@
 module Item exposing (..)
 
 import Json.Decode as D
-import Time exposing (Posix)
 
 
 type alias Items =
