@@ -6,7 +6,6 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Item exposing (Item)
 import Ports
-import Time exposing (Posix)
 
 
 type Confirming
