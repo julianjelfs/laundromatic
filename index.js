@@ -91,7 +91,7 @@ function getData(user) {
 }
 
 function today() {
-  return dayjs().hour(12).minute(0).second(0);
+  return dayjs().hour(12).minute(0).second(0).millisecond(0);
 }
 
 function collection({uid}) {
