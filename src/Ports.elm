@@ -15,6 +15,10 @@ port addNewItem : ( String, Int, Int ) -> Cmd msg
 
 port washItem : Item -> Cmd msg
 
+port pauseItem : Item -> Cmd msg
+
+port resumeItem : Item -> Cmd msg
+
 
 port deleteItem : Item -> Cmd msg
 
@@ -23,6 +27,5 @@ port signInError : (String -> msg) -> Sub msg
 
 
 port addNewError : (String -> msg) -> Sub msg
-
 
 port receivedItems : (E.Value -> msg) -> Sub msg

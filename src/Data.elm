@@ -6,7 +6,6 @@ import Json.Encode as E
 import ListItem
 import Login
 import NewItem
-import Time exposing (Posix)
 
 
 type alias Flags =
@@ -19,6 +18,8 @@ type Msg
     | ListItemMsg String ListItem.Msg
     | NewItemMsg NewItem.Msg
     | StartAddNew
+    | ResumeAll
+    | PauseAll
     | SignOut
 
 
@@ -30,6 +31,10 @@ type alias Model =
     , addingNew : Bool
     , newItem : NewItem.Model
     }
+
+allPaused: Model -> Bool
+allPaused { items } = List.all (\item -> item.pausedAt /= Nothing) items
+
 
 
 type alias User =

@@ -1,6 +1,12 @@
 module ListItem exposing (..)
 
-import DeleteIcon as Delete
+import Icons.DeleteIcon as Delete
+import Icons.WashIcon as Wash
+import Icons.Pause as Pause
+import Icons.Play as Play
+import Icons.Clock as Clock
+import Icons.YesIcon as Yes
+import Icons.NoIcon as No
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -12,6 +18,8 @@ type Confirming
     = NotConfirming
     | ConfirmingDelete
     | ConfirmingWash
+    | ConfirmingPause
+    | ConfirmingResume
 
 
 type alias Model =
@@ -23,9 +31,13 @@ type alias Model =
 type Msg
     = ConfirmDelete
     | ConfirmWash
+    | ConfirmPause
+    | ConfirmResume
     | Cancel
     | Delete Item
     | Wash Item
+    | Pause Item
+    | Resume Item
 
 
 init : Model
@@ -44,6 +56,12 @@ update msg model =
         ConfirmWash ->
             ( { model | confirming = ConfirmingWash }, Cmd.none )
 
+        ConfirmPause ->
+            ( { model | confirming = ConfirmingPause }, Cmd.none )
+
+        ConfirmResume ->
+            ( { model | confirming = ConfirmingResume }, Cmd.none )
+
         Cancel ->
             ( { model | confirming = NotConfirming }, Cmd.none )
 
@@ -52,6 +70,12 @@ update msg model =
 
         Wash item ->
             ( { model | busy = True }, Ports.washItem item )
+
+        Pause item ->
+            ( { model | busy = True }, Ports.pauseItem item )
+
+        Resume item ->
+            ( { model | busy = True }, Ports.resumeItem item )
 
 
 confirmView : Msg -> Html Msg
@@ -67,12 +91,12 @@ confirmView onConfirm =
             [ class "item__action -yes"
             , onClick onConfirm
             ]
-            [ text "Yes" ]
+            [ Yes.icon ]
         , button
             [ class "item__action -no"
             , onClick Cancel
             ]
-            [ text "No" ]
+            [No.icon]
         ]
 
 
@@ -85,8 +109,26 @@ view item model =
         ConfirmingWash ->
             confirmView (Wash item)
 
+        ConfirmingPause ->
+            confirmView (Pause item)
+
+        ConfirmingResume ->
+            confirmView (Resume item)
+
         NotConfirming ->
             let
+                paused = item.pausedAt /= Nothing
+
+                pauseAction = if paused then ConfirmResume else ConfirmPause  
+
+                status = 
+                    if item.dueInDays == 0 then 
+                        Due 
+                    else if item.dueInDays < 0 then 
+                        Overdue 
+                    else 
+                        UnderControl
+
                 pluralize n =
                     if n == 1 then
                         " day)"
@@ -99,7 +141,7 @@ view item model =
                 , classList [ ( "-processing", model.busy ) ]
                 ]
                 [ div
-                    [ class "item__control"
+                    [ class "item__action -delete"
                     , onClick ConfirmDelete
                     ]
                     [ Delete.icon ]
@@ -113,20 +155,27 @@ view item model =
                     ]
                 , button
                     [ class "item__action"
+                    , onClick pauseAction
+                    , classList [ ( "-paused", paused ), ("-active", not paused)  ]
+                    ]
+                    [ if paused then Play.icon else Pause.icon ]
+                , button
+                    [ class "item__action"
                     , onClick ConfirmWash
-                    , classList [ ( "-overdue", item.dueInDays < 0 ), ( "-due", item.dueInDays == 0 ) ]
+                    , classList [ ( "-overdue", status == Overdue ), ( "-due", status == Due ) ]
                     ]
-                    [ text <|
-                        if item.dueInDays == 0 then
-                            "Due"
-
-                        else if item.dueInDays < 0 then
-                            "Overdue"
-
-                        else
-                            "Wash"
-                    ]
+                    [ icon status ]
+                    
                 ]
+
+type Status = UnderControl | Due | Overdue
+
+icon: Status -> Html a
+icon status = 
+    case status of
+        UnderControl -> Wash.icon
+        Due -> Clock.icon
+        Overdue -> Clock.icon
 
 
 dueIn : Item -> String
