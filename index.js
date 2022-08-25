@@ -53,6 +53,32 @@ firebase.auth().onAuthStateChanged((user) => {
       .then(() => getData(user));
   });
 
+  elm.ports.pauseItem.subscribe((item) => {
+    console.log("Pausing: ", item);
+    const doc = db.collection(collection(user)).doc(item.id);
+    doc
+      .set(
+        {
+          pausedAt: Date.now(),
+        },
+        { merge: true }
+      )
+      .then(() => getData(user));
+  });
+
+  elm.ports.resumeItem.subscribe((item) => {
+    console.log("Resuming: ", item);
+    const doc = db.collection(collection(user)).doc(item.id);
+    doc
+      .set(
+        {
+          pausedAt: 0,
+        },
+        { merge: true }
+      )
+      .then(() => getData(user));
+  });
+
   elm.ports.deleteItem.subscribe((item) => {
     db.collection(collection(user))
       .doc(item.id)

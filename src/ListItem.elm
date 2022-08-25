@@ -18,6 +18,8 @@ type Confirming
     = NotConfirming
     | ConfirmingDelete
     | ConfirmingWash
+    | ConfirmingPause
+    | ConfirmingResume
 
 
 type alias Model =
@@ -29,9 +31,13 @@ type alias Model =
 type Msg
     = ConfirmDelete
     | ConfirmWash
+    | ConfirmPause
+    | ConfirmResume
     | Cancel
     | Delete Item
     | Wash Item
+    | Pause Item
+    | Resume Item
 
 
 init : Model
@@ -50,6 +56,12 @@ update msg model =
         ConfirmWash ->
             ( { model | confirming = ConfirmingWash }, Cmd.none )
 
+        ConfirmPause ->
+            ( { model | confirming = ConfirmingPause }, Cmd.none )
+
+        ConfirmResume ->
+            ( { model | confirming = ConfirmingResume }, Cmd.none )
+
         Cancel ->
             ( { model | confirming = NotConfirming }, Cmd.none )
 
@@ -58,6 +70,12 @@ update msg model =
 
         Wash item ->
             ( { model | busy = True }, Ports.washItem item )
+
+        Pause item ->
+            ( { model | busy = True }, Ports.pauseItem item )
+
+        Resume item ->
+            ( { model | busy = True }, Ports.resumeItem item )
 
 
 confirmView : Msg -> Html Msg
@@ -91,9 +109,17 @@ view item model =
         ConfirmingWash ->
             confirmView (Wash item)
 
+        ConfirmingPause ->
+            confirmView (Pause item)
+
+        ConfirmingResume ->
+            confirmView (Resume item)
+
         NotConfirming ->
             let
-                paused = False
+                paused = item.pausedAt /= Nothing
+
+                pauseAction = if paused then ConfirmResume else ConfirmPause  
 
                 status = 
                     if item.dueInDays == 0 then 
@@ -129,10 +155,10 @@ view item model =
                     ]
                 , button
                     [ class "item__action"
-                    , onClick ConfirmWash
+                    , onClick pauseAction
                     , classList [ ( "-paused", paused ), ("-active", not paused)  ]
                     ]
-                    [ Pause.icon ]
+                    [ if paused then Play.icon else Pause.icon ]
                 , button
                     [ class "item__action"
                     , onClick ConfirmWash
