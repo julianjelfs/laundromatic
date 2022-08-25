@@ -8,7 +8,10 @@ import Html.Events exposing (onClick)
 import Item exposing (..)
 import ListItem
 import Login
-import LogoutIcon
+import Icons.LogoutIcon as Logout
+import Icons.New as New
+import Icons.Pause as Pause
+import Icons.Play as Play
 import NewItem
 
 
@@ -22,10 +25,11 @@ view model =
             div [ class "app" ]
                 [ div
                     [ class "header" ]
-                    [ LogoutIcon.icon SignOut
+                    [ div [class "item__action -signout"] [ Logout.icon SignOut]
                     , h1 [ class "headline" ]
                         [ text "Laundromatic"
                         ]
+                    , pauseResume model
                     , addNew
                     ]
                 , showItems model
@@ -65,5 +69,16 @@ showItems model =
 
 addNew : Html Msg
 addNew =
-    button [ class "add-new", onClick StartAddNew ]
-        [ text " + " ]
+    div [ class "item__action -new", onClick StartAddNew ]
+        [ New.icon ]
+
+pauseResume : Model -> Html Msg
+pauseResume model =
+    let
+        paused = Data.allPaused model
+        action = if paused then ResumeAll else PauseAll
+    in
+    div [ class "item__action"
+    , classList [("-paused", paused), ("-active", not paused)]
+    , onClick action ]
+        [ if paused then Play.icon else Pause.icon]

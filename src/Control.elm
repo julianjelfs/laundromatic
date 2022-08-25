@@ -65,10 +65,10 @@ update msg model =
             , Cmd.map (ListItemMsg id) subCmd
             )
 
-        ReceivedItems itemsJson ->
+        ReceivedItems json ->
             let
                 items =
-                    D.decodeValue Item.itemsDecoder itemsJson
+                    D.decodeValue Item.itemsDecoder json
                         |> Result.withDefault []
 
                 itemModels =
@@ -85,6 +85,12 @@ update msg model =
 
         StartAddNew ->
             ( { model | addingNew = True }, Cmd.none )
+
+        PauseAll -> 
+            ( model, Cmd.none )
+
+        ResumeAll -> 
+            ( model, Cmd.none )
 
         SignOut ->
             ( { model | user = Nothing }, Ports.signOut () )

@@ -1,6 +1,12 @@
 module ListItem exposing (..)
 
-import DeleteIcon as Delete
+import Icons.DeleteIcon as Delete
+import Icons.WashIcon as Wash
+import Icons.Pause as Pause
+import Icons.Play as Play
+import Icons.Clock as Clock
+import Icons.YesIcon as Yes
+import Icons.NoIcon as No
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -67,12 +73,12 @@ confirmView onConfirm =
             [ class "item__action -yes"
             , onClick onConfirm
             ]
-            [ text "Yes" ]
+            [ Yes.icon ]
         , button
             [ class "item__action -no"
             , onClick Cancel
             ]
-            [ text "No" ]
+            [No.icon]
         ]
 
 
@@ -87,6 +93,16 @@ view item model =
 
         NotConfirming ->
             let
+                paused = False
+
+                status = 
+                    if item.dueInDays == 0 then 
+                        Due 
+                    else if item.dueInDays < 0 then 
+                        Overdue 
+                    else 
+                        UnderControl
+
                 pluralize n =
                     if n == 1 then
                         " day)"
@@ -99,7 +115,7 @@ view item model =
                 , classList [ ( "-processing", model.busy ) ]
                 ]
                 [ div
-                    [ class "item__control"
+                    [ class "item__action -delete"
                     , onClick ConfirmDelete
                     ]
                     [ Delete.icon ]
@@ -114,19 +130,26 @@ view item model =
                 , button
                     [ class "item__action"
                     , onClick ConfirmWash
-                    , classList [ ( "-overdue", item.dueInDays < 0 ), ( "-due", item.dueInDays == 0 ) ]
+                    , classList [ ( "-paused", paused ), ("-active", not paused)  ]
                     ]
-                    [ text <|
-                        if item.dueInDays == 0 then
-                            "Due"
-
-                        else if item.dueInDays < 0 then
-                            "Overdue"
-
-                        else
-                            "Wash"
+                    [ Pause.icon ]
+                , button
+                    [ class "item__action"
+                    , onClick ConfirmWash
+                    , classList [ ( "-overdue", status == Overdue ), ( "-due", status == Due ) ]
                     ]
+                    [ icon status ]
+                    
                 ]
+
+type Status = UnderControl | Due | Overdue
+
+icon: Status -> Html a
+icon status = 
+    case status of
+        UnderControl -> Wash.icon
+        Due -> Clock.icon
+        Overdue -> Clock.icon
 
 
 dueIn : Item -> String
