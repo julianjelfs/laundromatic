@@ -28,4 +28,4 @@ itemDecoder =
         (D.field "intervalInDays" D.int)
         (D.field "dueInDays" D.int)
         (D.field "name" D.string)
-        (D.field "pausedAt" (D.map (\d -> if d == 0 then Nothing else Just d) D.int))
+        (D.map (\d -> if d == Just 0 then Nothing else d) (D.maybe (D.field "pausedAt" D.int)))
