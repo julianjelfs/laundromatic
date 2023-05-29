@@ -81,22 +81,22 @@ update msg model =
 confirmView : Msg -> Html Msg
 confirmView onConfirm =
     div
-        [ class "item"
+        [ class "item -confirm"
         ]
         [ div
             [ class "item__desc -confirm" ]
             [ p [ class "item__title" ] [ text "Are you sure?" ]
             ]
         , button
-            [ class "item__action -yes"
-            , onClick onConfirm
-            ]
-            [ Yes.icon ]
-        , button
             [ class "item__action -no"
             , onClick Cancel
             ]
             [No.icon]
+        , button
+            [ class "item__action -yes"
+            , onClick onConfirm
+            ]
+            [ Yes.icon ]
         ]
 
 
@@ -138,7 +138,11 @@ view item model =
             in
             div
                 [ class "item"
-                , classList [ ( "-processing", model.busy ) ]
+                , classList 
+                    [ ( "-processing", model.busy ) 
+                    , ("-overdue", status == Overdue)
+                    , ("-due", status == Due)
+                    ]
                 ]
                 [ div
                     [ class "item__action -delete"
@@ -164,18 +168,11 @@ view item model =
                     , onClick ConfirmWash
                     , classList [ ( "-overdue", status == Overdue ), ( "-due", status == Due ) ]
                     ]
-                    [ icon status ]
+                    [ Wash.icon ]
                     
                 ]
 
 type Status = UnderControl | Due | Overdue
-
-icon: Status -> Html a
-icon status = 
-    case status of
-        UnderControl -> Wash.icon
-        Due -> Clock.icon
-        Overdue -> Clock.icon
 
 
 dueIn : Item -> String

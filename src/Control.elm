@@ -18,6 +18,7 @@ init flags =
       , itemModels = Dict.empty
       , addingNew = False
       , newItem = NewItem.init
+      , refreshing = False
       }
     , Cmd.none
     )
@@ -26,6 +27,9 @@ init flags =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Refresh -> 
+            ({ model | refreshing = True}, Ports.refresh ())
+
         LoginMsg subMsg ->
             let
                 ( subModel, subCmd ) =
@@ -79,6 +83,7 @@ update msg model =
                 | items = items
                 , addingNew = False
                 , itemModels = itemModels
+                , refreshing = False
               }
             , Cmd.none
             )

@@ -41,6 +41,8 @@ firebase.auth().onAuthStateChanged((user) => {
     firebase.auth().signOut();
   });
 
+  elm.ports.refresh.subscribe(() => getData(user));
+
   elm.ports.washItem.subscribe((item) => {
     const doc = db.collection(collection(user)).doc(item.id);
     doc

@@ -21,6 +21,7 @@ type Msg
     | ResumeAll
     | PauseAll
     | SignOut
+    | Refresh
 
 
 type alias Model =
@@ -30,6 +31,7 @@ type alias Model =
     , itemModels : Dict String ListItem.Model
     , addingNew : Bool
     , newItem : NewItem.Model
+    , refreshing: Bool
     }
 
 allPaused: Model -> Bool

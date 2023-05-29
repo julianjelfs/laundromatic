@@ -90,7 +90,7 @@ view model =
                         ]
                         []
                     ]
-                , button [ type_ "submit" ] [ text "Add new item" ]
+                , button [ class "submit", type_ "submit" ] [ text "Add new item" ]
                 , button [ class "cancel", preventDefaultOn "click" (D.succeed ( Cancel, True )) ] [ text "Cancel" ]
                 , case model.error of
                     Nothing ->

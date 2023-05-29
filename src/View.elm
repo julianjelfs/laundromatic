@@ -4,7 +4,7 @@ import Data exposing (..)
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, stopPropagationOn)
 import Item exposing (..)
 import ListItem
 import Login
@@ -12,6 +12,7 @@ import Icons.LogoutIcon as Logout
 import Icons.New as New
 import Icons.Pause as Pause
 import Icons.Play as Play
+import Json.Decode as Json
 import NewItem
 
 
@@ -24,11 +25,11 @@ view model =
         Just _ ->
             div [ class "app" ]
                 [ div
-                    [ class "header" ]
+                    [ class "header", onClick Refresh  ]
                     [ div [class "item__action -signout"] [ Logout.icon SignOut]
-                    , h1 [ class "headline" ]
-                        [ text "Laundromatic"
-                        ]
+                    , div [ class "headline"]  [h1 [ class "headline__text" ]
+                        [ if model.refreshing then text "Refreshing ..." else text "Laundromatic"
+                        ]]
                     , pauseResume model
                     , addNew
                     ]
@@ -69,7 +70,7 @@ showItems model =
 
 addNew : Html Msg
 addNew =
-    div [ class "item__action -new", onClick StartAddNew ]
+    div [ class "item__action -new", stopPropagationOn "click" (Json.succeed (StartAddNew, True)) ]
         [ New.icon ]
 
 pauseResume : Model -> Html Msg
@@ -80,5 +81,5 @@ pauseResume model =
     in
     div [ class "item__action"
     , classList [("-paused", paused), ("-active", not paused)]
-    , onClick action ]
+    , stopPropagationOn "click" (Json.succeed (action, True)) ]
         [ if paused then Play.icon else Pause.icon]

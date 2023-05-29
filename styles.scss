@@ -10,7 +10,9 @@ html {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: linear-gradient(#fff, #efefef, #fff);
+  background-color: #191919;
+  margin: 0;
+  color: #fff;
 }
 
 p {
@@ -23,18 +25,36 @@ p {
 
 .header {
   display: flex;
+  cursor: pointer;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  margin: 0 12px 5px 12px;
+  padding: 10px 12px;
+  margin: 0;
   gap: 8px;
 }
 
 .headline {
-  font-size: 24px;
   flex-grow: 1;
-  margin: 0;
   text-align: center;
+
+  &__text {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+    display: inline;
+    background: linear-gradient(
+      45deg,
+      red,
+      orange,
+      yellow,
+      green,
+      lighten(blue, 20%),
+      lighten(indigo, 20%),
+      violet
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 svg {
@@ -42,24 +62,41 @@ svg {
   height: 18px;
 }
 
-$shadow: 5px 5px 5px 0px #efefef;
 $dark: #dedede;
-$dark-txt: #999;
+$dark-txt: #777;
 
 .item {
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  border: 1px solid #efefef;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 12px;
-  box-shadow: $shadow;
-  gap: 8px;
+  gap: 10px;
+  color: #191919;
   background-color: #fff;
+  background-color: greenyellow;
+  transition: background-color 250ms ease-in-out;
 
-  &.-processing {
-    background-color: #efefef;
+  &.-overdue .item__action,
+  &.-due .item__action {
+    border: 1px solid #fff;
+  }
+
+  &.-overdue {
+    background-color: orangered;
+    color: #fff;
+  }
+
+  &.-due {
+    background-color: orange;
+    color: #fff;
+  }
+
+  &.-processing,
+  &.-confirm {
+    background-color: #191919;
+    color: #fff;
   }
 
   .item__control {
@@ -90,7 +127,6 @@ $dark-txt: #999;
       font-weight: lighter;
       font-style: italic;
       font-size: 14px;
-      color: #333;
     }
   }
 }
@@ -107,6 +143,7 @@ $dark-txt: #999;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  border: 1px solid transparent;
 
   &.-overdue {
     background-color: orangered;
@@ -115,7 +152,8 @@ $dark-txt: #999;
   &.-signout,
   &.-delete {
     color: $dark-txt;
-    background-color: $dark;
+    background-color: #fff;
+    border: 1px solid $dark;
   }
 
   &.-yes,
@@ -125,6 +163,7 @@ $dark-txt: #999;
 
   &.-due {
     background-color: orange;
+    border: 1px solid #fff;
   }
 
   &.-paused {
@@ -174,7 +213,6 @@ $dark-txt: #999;
     color: #ffffff;
     border: none;
     border-radius: 5px;
-    box-shadow: $shadow;
     margin-top: 10px;
     margin-right: 10px;
 
@@ -183,6 +221,10 @@ $dark-txt: #999;
       color: #000;
       border: 1px solid #efefef;
       font-weight: normal;
+    }
+
+    &.submit {
+      border: 1px solid #fff;
     }
   }
 }
@@ -207,5 +249,6 @@ $dark-txt: #999;
   width: 80%;
   margin: auto;
   margin-top: 40px;
-  background-color: #fff;
+  background-color: #191919;
+  color: #fff;
 }

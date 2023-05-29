@@ -12,6 +12,8 @@ port signOut : () -> Cmd msg
 
 port addNewItem : ( String, Int, Int ) -> Cmd msg
 
+port refresh : () -> Cmd msg
+
 
 port washItem : Item -> Cmd msg
 
