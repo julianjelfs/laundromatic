@@ -8,11 +8,18 @@ html {
   box-sizing: inherit;
 }
 
+$dark: #465c69;
+$light: #f8f7f9;
+
+$ok: #60ab9a;
+$due: #f2e94e;
+$overdue: #da3e52;
+
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #191919;
+  background-color: $light;
   margin: 0;
-  color: #fff;
+  color: $dark;
 }
 
 p {
@@ -42,7 +49,7 @@ p {
     font-weight: bold;
     margin: 0;
     display: inline;
-    color: #fff;
+    color: $dark;
   }
 }
 
@@ -50,9 +57,6 @@ svg {
   width: 18px;
   height: 18px;
 }
-
-$dark: #dedede;
-$dark-txt: #777;
 
 .item {
   cursor: pointer;
@@ -62,30 +66,24 @@ $dark-txt: #777;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 12px;
   gap: 10px;
-  color: #191919;
-  background-color: #fff;
-  background-color: greenyellow;
+  color: $light;
+  background-color: $ok;
   transition: background-color 250ms ease-in-out;
 
-  &.-overdue .item__action,
-  &.-due .item__action {
-    border: 1px solid #fff;
-  }
-
   &.-overdue {
-    background-color: orangered;
-    color: #fff;
+    background-color: $overdue;
+    color: $light;
   }
 
   &.-due {
-    background-color: orange;
-    color: #fff;
+    background-color: $due;
+    color: $dark;
   }
 
   &.-processing,
   &.-confirm {
-    background-color: #191919;
-    color: #fff;
+    background-color: $dark;
+    color: $light;
   }
 
   .item__control {
@@ -126,47 +124,25 @@ $dark-txt: #777;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: green;
+  background-color: $dark;
   font-weight: bold;
-  color: #ffffff;
+  color: $light;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   border: 1px solid transparent;
 
-  &.-overdue {
-    background-color: orangered;
-  }
-
   &.-signout,
   &.-delete {
-    color: $dark-txt;
-    background-color: #fff;
+    color: $dark;
+    background-color: $light;
     border: 1px solid $dark;
   }
 
   &.-yes,
-  &.-new {
-    background-color: hotpink;
-  }
-
-  &.-due {
-    background-color: orange;
-    border: 1px solid #fff;
-  }
-
-  &.-paused {
-    background-color: green;
-  }
-
-  &.-active {
-    background-color: orange;
-  }
-
   &.-no {
-    background-color: #fff;
-    border: 1px solid #efefef;
-    font-weight: normal;
+    color: $dark;
+    background-color: $light;
   }
 }
 
@@ -197,23 +173,23 @@ $dark-txt: #777;
 
   button {
     padding: 8px;
-    background-color: rgb(17, 6, 11);
+    background-color: $dark;
     font-weight: bold;
-    color: #ffffff;
+    color: $light;
     border: none;
     border-radius: 5px;
     margin-top: 10px;
     margin-right: 10px;
 
     &.cancel {
-      background-color: #fff;
-      color: #000;
+      background-color: $light;
+      color: $dark;
       border: 1px solid #efefef;
       font-weight: normal;
     }
 
     &.submit {
-      border: 1px solid #fff;
+      border: 1px solid $light;
     }
   }
 }
@@ -238,6 +214,6 @@ $dark-txt: #777;
   width: 80%;
   margin: auto;
   margin-top: 40px;
-  background-color: #191919;
-  color: #fff;
+  background-color: $light;
+  color: $dark;
 }
