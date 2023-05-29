@@ -42,18 +42,7 @@ p {
     font-weight: bold;
     margin: 0;
     display: inline;
-    background: linear-gradient(
-      45deg,
-      red,
-      orange,
-      yellow,
-      green,
-      lighten(blue, 20%),
-      lighten(indigo, 20%),
-      violet
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #fff;
   }
 }
 
